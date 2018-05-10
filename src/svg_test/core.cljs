@@ -7,16 +7,8 @@
 
 (defonce app-state (atom {:text "First test!" :fill-number 0}))
 
-(defn make-zero[x]
-  (println x)
-  (println (- x x))
-  (- x x))
-
-(defn reset-color []
-  (make-zero (get-in @app-state [:fill-number])))
-
-(defn fill-number []
-  (get-in @app-state [:fill-number]))
+(def color1 "blue")
+(def color2 "yellow")
 
   ;(reset! app-state ([:fill-number] 1 [:text] "It changed!"))     
   ;(reset! app-state ([:text] "It changed!"))                      
@@ -25,9 +17,6 @@
   [:div
    [:h1 (:text @app-state)]
    [:h3 "Click the circle!"]
-   [:button {:on-click (fn button-click [e]
-                         (js/alert "You clicked me!"))
-             } "Js/alert Button" ]
    [:div
     [:svg {:width 100 :height 100}
      [:circle {:cx 50
@@ -36,20 +25,21 @@
                :stroke "green"
                :stroke-width 4
                :fill (if (zero? (get-in @app-state [:fill-number]))
-                       "blue"
-                       "yellow")
+                       color1
+                       color2)
                :on-click (fn circle-click [e]
                            (if (zero? (get-in @app-state [:fill-number]))
-                                 (do ((prn (swap! app-state update-in [:fill-number] inc))
-                                            (prn (swap! app-state assoc-in [:text] "Changed!"))
-                                            (println (get-in @app-state [:fill-number]))))
+                                 (do (prn (swap! app-state update-in [:fill-number] inc))
+                                      (prn (swap! app-state assoc-in [:text] (str "Changed to " color2 "!")))
+                                      (prn (get-in @app-state [:fill-number])))
                                  (println "Not zero")
                                           ))}]]]
    [:div
     [:button {:on-click (fn reset-click [e]          
                           (if (== (get-in @app-state [:fill-number]) 1)
-                              (swap! app-state update-in [:fill-number] dec)
-                              (println (get-in @app-state [:fill-number]))))} "Reset color"]]
+                            (do (swap! app-state update-in [:fill-number] dec)
+                                (swap! app-state assoc-in [:text] (str "Back to " color1 "!")))
+                              (println (get-in @app-state [:fill-number]))))} (str "Reset to color " color1)]]
    ])
 ;(swap! player update :score + 5)
 (reagent/render-component [hello-world]
